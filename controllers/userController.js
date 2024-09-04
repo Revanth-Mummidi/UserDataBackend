@@ -1,3 +1,4 @@
+import MainUserModel from "../models/mainUserModel.js";
 import userModel from "../models/userModel.js";
 
 export const getUsers = async (req, res) => {
@@ -138,3 +139,54 @@ export const updateUser = async (req, res) => {
     }
 }
 
+
+export const login=async(req,res)=>{
+   try{
+       const {email,password}=req.body;
+       const user=await MainUserModel.findOne({email:email  });
+         if(!user){
+              return res.status(404).json({
+                message:"User not found"
+              });
+         }
+         const isSame=await bcrpyt.compare(password,user.password);
+            if(!isSame){
+                return res.status(400).json({
+                    message:"Invalid credentials"
+                });
+            }
+            res.status(200).json({
+                message:"User logged in successfully",
+                data:user
+            });
+        }
+    catch(err){
+        console.log("Error in logging in user",err);
+    }
+}
+
+export const register = async(req,res)=>{
+    try{
+        const {username,email,password}=req.body;
+        const user=await userModel.findOne({email:email  });
+          if(user){
+               return res.status(404).json({
+                message:"User Already Existed!"
+               });
+          }
+          const hashedpassword = await bcrpyt.hash(password,10);
+            const newUser=await MainUserModel.create({
+                username:username,
+                email:email,
+                password:hashedpassword
+            });
+
+             res.status(200).json({
+                 message:"User logged in successfully",
+                 data:newUser
+             });
+         }
+     catch(err){
+         console.log("Error in logging in user",err);
+     }
+}
