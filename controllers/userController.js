@@ -1,5 +1,7 @@
 import MainUserModel from "../models/mainUserModel.js";
 import userModel from "../models/userModel.js";
+import bcrypt from 'bcrypt';
+
 
 export const getUsers = async (req, res) => {
   try{
@@ -149,7 +151,7 @@ export const login=async(req,res)=>{
                 message:"User not found"
               });
          }
-         const isSame=await bcrpyt.compare(password,user.password);
+         const isSame=await bcrypt.compare(password,user.password);
             if(!isSame){
                 return res.status(400).json({
                     message:"Invalid credentials"
@@ -168,17 +170,19 @@ export const login=async(req,res)=>{
 export const register = async(req,res)=>{
     try{
         const {username,email,password}=req.body;
-        const user=await userModel.findOne({email:email  });
+        const user=await MainUserModel.findOne({email:email  });
           if(user){
                return res.status(404).json({
-                message:"User Already Existed!"
+                message:"User Already Existed!",
+                user:user
                });
           }
-          const hashedpassword = await bcrpyt.hash(password,10);
+          const hashedpassword = await bcrypt.hash(password,10);
+    
             const newUser=await MainUserModel.create({
                 username:username,
                 email:email,
-                password:hashedpassword
+                password:password
             });
 
              res.status(200).json({

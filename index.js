@@ -15,6 +15,7 @@ App.use(bodyParser.json());
 App.use(express.json());
 
 App.use(express.urlencoded({ extended: true }));
+
 App.use(cors({
     origin: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -49,7 +50,6 @@ App.post('/api/users/upload',upload.single('file'),async(req,res)=>{
 })
 
 App.use('/api/users', userRouter);
-
 
 App.listen(3000, () => {     
     console.log('Server is running on port 3000');
