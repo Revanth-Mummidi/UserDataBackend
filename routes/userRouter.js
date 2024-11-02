@@ -12,4 +12,7 @@ userRouter.delete('/:id', deleteUser);
 userRouter.put('/:id', updateUser);
 userRouter.post('/getcategorizeddata',getCategorizedData);
 
+userRouter.post('auth/login',login);
+userRouter.post('auth/register',register);
+
 export default userRouter;
