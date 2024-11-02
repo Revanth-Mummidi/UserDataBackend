@@ -13,7 +13,11 @@ const mainUserSchema = mongoose.Schema({
         type:String,
         required:[true,"Please add the contact email"],
         unique:[true,"Email address is already taken"]
-    }
+    },
+    usersData:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User"
+    }]
 },
 {
     timestamps:true,

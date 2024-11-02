@@ -20,8 +20,7 @@ const userSchema = mongoose.Schema({
     },
     email:{
         type:String,
-        required:[true,"Please add the contact email"],
-        unique:[true,"Email address is already taken"]
+        required:[true,"Please add the contact email"]
     },
     dob:{
         type:String,

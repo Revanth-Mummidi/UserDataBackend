@@ -7,6 +7,8 @@ import bodyParser from 'body-parser';
 import multer from 'multer';
 import readXlsxFile from './utils/xlsx.js';
 import insertExcelData from './utils/insertExcelData.js';
+import authRouter from './routes/authRouter.js';
+import validateToken from './middlewares/validateToken.js';
 
 const App = express();
 configDotenv();
@@ -30,8 +32,8 @@ const storage=multer.diskStorage({
     }
 })
 const upload=multer({storage:storage});
-
-App.post('/api/users/upload',upload.single('file'),async(req,res)=>{
+App.use('/api/users/auth',authRouter);
+App.post('/api/users/upload',validateToken,upload.single('file'),async(req,res)=>{
     const file = req.file;
     console.log("Filename",file.filename);
     if(!file){
@@ -40,8 +42,8 @@ App.post('/api/users/upload',upload.single('file'),async(req,res)=>{
         return next(error);
     }
     let arr1=readXlsxFile(file.filename);
-    const result=await insertExcelData(arr1);
-    // console.log("Result",result);
+    const mainUserEmail=req.email;
+    const result=await insertExcelData(arr1,mainUserEmail);
     if([...result.error].length>0){
         return res.status(400).json({"message":"Users already exists","data":result.error});
     }
@@ -50,6 +52,11 @@ App.post('/api/users/upload',upload.single('file'),async(req,res)=>{
 })
 
 App.use('/api/users', userRouter);
+App.use('/',(req,res)=>{
+    res.json({
+        "message":"Working "
+    })
+})
 
 App.listen(3000, () => {     
     console.log('Server is running on port 3000');
